@@ -1,16 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
+import type { Status, CollectionStatus } from 'src/models/Status'
 import { RootState } from 'src/store/store'
 import { Favourite, favouritesAPI } from 'src/api/favourites.api'
 import { Trailer } from 'src/api/trailers.api'
 
-type Status = 'idle' | 'loading' | 'failed'
-
-export interface InterestState {
-  favourites: {
-    status: Status
-    collection: Favourite[]
-  }
+export interface FavouritesState {
+  favourites: CollectionStatus<Favourite>
   deleteFavourite: {
     status: Status
   }
@@ -19,7 +15,7 @@ export interface InterestState {
   }
 }
 
-const initialState: InterestState = {
+const initialState: FavouritesState = {
   favourites: {
     status: 'idle',
     collection: [],
@@ -53,8 +49,8 @@ export const deleteFavourite = createAsyncThunk(
   }
 )
 
-export const interestSlice = createSlice({
-  name: 'interest',
+export const favouritesSlice = createSlice({
+  name: 'favourites',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -91,21 +87,21 @@ export const interestSlice = createSlice({
 })
 
 export const selectFetchFavouriteStatus = (state: RootState) =>
-  state.favourite.favourites.status
+  state.favouriteSlice.favourites.status
 export const selectDeleteFavouriteStatus = (state: RootState) =>
-  state.favourite.deleteFavourite.status
+  state.favouriteSlice.deleteFavourite.status
 export const selectSetFavouriteStatus = (state: RootState) =>
-  state.favourite.setFavourite.status
+  state.favouriteSlice.setFavourite.status
 
 export const selectFavouriteCollection = (state: RootState) =>
-  state.favourite.favourites.collection
+  state.favouriteSlice.favourites.collection
 
 export const selectIsFavourite = (state: RootState) => (id: Trailer['id']) => {
-  return state.favourite.favourites.collection.find(
+  return state.favouriteSlice.favourites.collection.find(
     (item) => item.trailerId === id
   )
 }
 
-export const {} = interestSlice.actions
+export const {} = favouritesSlice.actions
 
-export default interestSlice.reducer
+export default favouritesSlice.reducer

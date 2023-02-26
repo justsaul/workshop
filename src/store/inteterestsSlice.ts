@@ -1,23 +1,26 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
+import type { Status, CollectionStatus } from 'src/models/Status'
 import { RootState } from 'src/store/store'
-
 import { interestAPI, Interest } from 'src/api/interest.api'
 
-type Status = 'idle' | 'loading' | 'failed'
-
 export interface InterestState {
-  interests: Array<Interest>
-  status: Status
-  updateInterestStatus: Status
+  interests: CollectionStatus<Interest>
   topInterests: Array<Interest>
+  updateInterests: {
+    status: Status
+  }
 }
 
 const initialState: InterestState = {
+  interests: {
+    status: 'idle',
+    collection: [],
+  },
   topInterests: [],
-  interests: [],
-  status: 'idle',
-  updateInterestStatus: 'idle',
+  updateInterests: {
+    status: 'idle',
+  },
 }
 
 export const fetchInterests = createAsyncThunk(
@@ -41,43 +44,63 @@ export const interestSlice = createSlice({
     clearAll: (state) => {
       state = initialState
     },
-    calculateTopInterests: (state) => {
-      // TODO based on occurance, display top 3 elements here.
-      const topInterests = state.topInterests
-      state.topInterests = topInterests
-    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(setInterest.pending, (state) => {
-        state.updateInterestStatus = 'loading'
+        state.updateInterests.status = 'loading'
       })
       .addCase(setInterest.fulfilled, (state, action) => {
-        state.updateInterestStatus = 'idle'
+        state.updateInterests.status = 'idle'
       })
       .addCase(setInterest.rejected, (state) => {
-        state.updateInterestStatus = 'failed'
+        state.updateInterests.status = 'failed'
       })
       .addCase(fetchInterests.pending, (state) => {
-        state.status = 'loading'
+        state.interests.status = 'loading'
       })
       .addCase(fetchInterests.fulfilled, (state, action) => {
-        state.status = 'idle'
-        state.interests = action.payload
+        state.interests.status = 'idle'
+        state.interests.collection = action.payload
       })
       .addCase(fetchInterests.rejected, (state) => {
-        state.status = 'failed'
+        state.interests.status = 'failed'
       })
   },
 })
 
-export const { clearAll, calculateTopInterests } = interestSlice.actions
+export const { clearAll } = interestSlice.actions
 
-export const selectInterests = (state: RootState) => state.interest.interests
-export const selectInterestsStatus = (state: RootState) => state.interest.status
+export const selectInterests = (state: RootState) =>
+  state.interestSlice.interests
+export const selectSortedInterests = (state: RootState) => {
+  const interestsRepresentation =
+    state.interestSlice.interests.collection.reduce(
+      (accumulator: Record<string, number>, entry: Interest) => {
+        if (accumulator[entry.trailerId]) {
+          return {
+            ...accumulator,
+            [entry.trailerId]: accumulator[entry.trailerId] + 1,
+          }
+        }
+        return {
+          ...accumulator,
+          [entry.trailerId]: 1,
+        }
+      },
+      {} as Record<string, number>
+    )
+
+  return Object.entries(interestsRepresentation)
+    .sort((a, b) => b[1] - a[1])
+    .map((entry) => entry[0])
+}
+
+export const selectInterestsStatus = (state: RootState) =>
+  state.interestSlice.interests.status
 export const selectUpdateStatus = (state: RootState) =>
-  state.interest.updateInterestStatus
+  state.interestSlice.updateInterests.status
 export const selectTopInterests = (state: RootState) =>
-  state.interest.topInterests
+  state.interestSlice.topInterests
 
 export default interestSlice.reducer
