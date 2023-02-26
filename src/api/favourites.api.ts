@@ -28,11 +28,9 @@ export const favouritesAPI = {
     return response.data
   },
   deleteFavourite: async (id: Favourite['id'], options: HttpOptions) => {
-    console.log('received', options.signal)
     const response = await httpInstance.delete<Favourite>(`favourites/${id}`, {
       signal: options.signal,
     })
-    console.log('received', options.signal)
 
     return response.data
   },

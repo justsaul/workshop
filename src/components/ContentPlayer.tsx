@@ -35,26 +35,26 @@ export const ContentPlayer: React.FC<ContentPlayerProps> = ({
     setIsPlayingInternal(false)
   }
 
+  const renderPlayer = () => {
+    return (
+      <ReactPlayer
+        url={url}
+        playing={isPlayingInternal}
+        height={height}
+        width={'100%'}
+        volume={volume}
+      />
+    )
+  }
+
   return (
     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       {isLoading ? (
         <Skeleton variant="rectangular" width="100%">
-          <ReactPlayer
-            url={url}
-            playing={isPlayingInternal}
-            height={height}
-            width={'100%'}
-            volume={volume}
-          />
+          {renderPlayer()}
         </Skeleton>
       ) : (
-        <ReactPlayer
-          url={url}
-          playing={isPlayingInternal}
-          height={height}
-          width={'100%'}
-          volume={volume}
-        />
+        renderPlayer()
       )}
     </div>
   )
