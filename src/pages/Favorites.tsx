@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import {
   List,
   ListItem,
@@ -54,9 +54,8 @@ export const FavouritesPage = () => {
         {favourites.map((favourite) => {
           const trailerDetails = getTrailerById(favourite.trailerId)
           return (
-            <>
+            <React.Fragment key={`list-item-${favourite.id}`}>
               <ListItem
-                key={favourite.id}
                 disableGutters
                 secondaryAction={
                   <IconButton
@@ -80,7 +79,7 @@ export const FavouritesPage = () => {
                 />
               </ListItem>
               <Divider variant="inset" component="li" />
-            </>
+            </React.Fragment>
           )
         })}
       </List>

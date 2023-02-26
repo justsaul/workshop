@@ -1,6 +1,12 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Card, CardContent, CardMedia, Typography } from '@mui/material'
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Skeleton,
+  Typography,
+} from '@mui/material'
 
 import { setFavourite, selectIsFavourite } from 'src/store/favouritesSlice'
 import { useAppDispatch, useAppSelector } from 'src/store/hooks'
@@ -12,7 +18,8 @@ export const TrailerDetailsCard: React.FC<{
   url?: string
   title: string
   id: string
-}> = ({ url, title, id }) => {
+  isLoading?: boolean
+}> = ({ url, title, id, isLoading = false }) => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
@@ -22,14 +29,18 @@ export const TrailerDetailsCard: React.FC<{
     <Card sx={{ width: 330 }} elevation={3}>
       <CardMedia>
         <ContentPlayer
+          isLoading={isLoading}
           url={url}
           onHover={() => dispatch(setInterest({ id }))}
         />
       </CardMedia>
       <CardContent>
-        <Typography noWrap>{title}</Typography>
+        <Typography noWrap>
+          {isLoading ? <Skeleton variant={'text'} width={100} /> : title}
+        </Typography>
       </CardContent>
       <PlayerActions
+        isLoading={isLoading}
         isFavourite={!!selectedFavourite}
         onDetailsSelection={() => navigate(`/${id}`)}
         onFavouritesSelection={() => dispatch(setFavourite({ id }))}

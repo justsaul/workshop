@@ -1,6 +1,12 @@
 import React, { useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { Card, CardMedia, CardContent, Typography } from '@mui/material'
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  Skeleton,
+} from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from 'src/store/hooks'
 import {
@@ -17,6 +23,7 @@ import {
   fetchInterests,
   clearAll,
   selectSortedInterests,
+  selectInterestsStatus,
 } from 'src/store/inteterestsSlice'
 import { ContentPlayer } from 'src/components/ContentPlayer'
 import { TrailersGrid } from 'src/components/TrailersGrid'
@@ -74,6 +81,7 @@ export const TrailerDetails = () => {
   const details = useAppSelector(selectTrailerDetails)
   const getTrailerById = useAppSelector(selectTrailerById)
   const interests = useAppSelector(selectSortedInterests)
+  const interestsStatus = useAppSelector(selectInterestsStatus)
   const trailersStatus = useAppSelector(selectTrailerStatus)
 
   const getTrailersFromInterest = useMemo(
@@ -83,9 +91,14 @@ export const TrailerDetails = () => {
 
   return (
     <>
-      <Card>
+      <Card style={{ minHeight: '100vh' }}>
         <CardMedia>
-          <ContentPlayer isPlaying url={details?.url} height={'500px'} />
+          <ContentPlayer
+            isPlaying
+            url={details?.url}
+            height={'500px'}
+            isLoading={trailersStatus === 'loading'}
+          />
         </CardMedia>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
@@ -94,18 +107,18 @@ export const TrailerDetails = () => {
           <Typography variant="body2" color="text.secondary">
             {details?.content}
           </Typography>
-          <>
-            {trailersStatus === 'loading' ? (
-              <div>Loading...</div>
+
+          <Typography variant="h5" color="div">
+            {interestsStatus === 'loading' ? (
+              <Skeleton variant={'text'} width={150} />
             ) : (
-              <>
-                <Typography variant="h5" color="div">
-                  More like this
-                </Typography>
-                <TrailersGrid collection={getTrailersFromInterest} />
-              </>
+              'More like this'
             )}
-          </>
+          </Typography>
+          <TrailersGrid
+            collection={getTrailersFromInterest}
+            isLoading={interestsStatus === 'loading'}
+          />
         </CardContent>
       </Card>
     </>

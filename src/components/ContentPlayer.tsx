@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import ReactPlayer from 'react-player'
+import { Skeleton } from '@mui/material'
 
 import { useInteractionDetection } from 'src/hooks/useInteractionDetection'
 
@@ -9,6 +10,7 @@ type ContentPlayerProps = {
   volume?: number
   onHover?: () => void
   height?: string
+  isLoading?: boolean
 }
 
 export const ContentPlayer: React.FC<ContentPlayerProps> = ({
@@ -17,6 +19,7 @@ export const ContentPlayer: React.FC<ContentPlayerProps> = ({
   height = '100%',
   onHover,
   url,
+  isLoading = false,
 }) => {
   const { dismissInteraction, handleInteraction } =
     useInteractionDetection(onHover)
@@ -34,13 +37,25 @@ export const ContentPlayer: React.FC<ContentPlayerProps> = ({
 
   return (
     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <ReactPlayer
-        url={url}
-        playing={isPlayingInternal}
-        height={height}
-        width={'100%'}
-        volume={volume}
-      />
+      {isLoading ? (
+        <Skeleton variant="rectangular" width="100%">
+          <ReactPlayer
+            url={url}
+            playing={isPlayingInternal}
+            height={height}
+            width={'100%'}
+            volume={volume}
+          />
+        </Skeleton>
+      ) : (
+        <ReactPlayer
+          url={url}
+          playing={isPlayingInternal}
+          height={height}
+          width={'100%'}
+          volume={volume}
+        />
+      )}
     </div>
   )
 }
