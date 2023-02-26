@@ -1,8 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import ReactPlayer from 'react-player'
-
-import { Card, CardMedia, CardContent, Typography, Grid } from '@mui/material'
+import { Card, CardMedia, CardContent, Typography } from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from 'src/store/hooks'
 import {
@@ -20,10 +18,12 @@ import {
   clearAll,
   selectSortedInterests,
 } from 'src/store/inteterestsSlice'
-import { Player } from 'src/components/Player'
+import { ContentPlayer } from 'src/components/ContentPlayer'
+import { TrailersGrid } from 'src/components/TrailersGrid'
+import { Trailer } from 'src/api/trailers.api'
 
 const useFetchTrailerDetails = () => {
-  const params = useParams()
+  const params = useParams<{ id: string }>()
   const dispatch = useAppDispatch()
 
   useEffect(() => {
@@ -66,20 +66,19 @@ export const TrailerDetails = () => {
 
   const details = useAppSelector(selectTrailerDetails)
   const getTrailerById = useAppSelector(selectTrailerById)
-  const topInterests = useAppSelector(selectSortedInterests)
+  const interests = useAppSelector(selectSortedInterests)
   const trailersStatus = useAppSelector(selectTrailerStatus)
+
+  const getTrailersFromInterest = useMemo(
+    () => interests.map(getTrailerById).filter(Boolean) as Trailer[],
+    [interests]
+  )
 
   return (
     <>
       <Card>
         <CardMedia>
-          <ReactPlayer
-            url={details?.url}
-            playing={true}
-            height={500}
-            width={'100%'}
-            volume={0}
-          />
+          <ContentPlayer isPlaying url={details?.url} height={'500px'} />
         </CardMedia>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
@@ -94,22 +93,9 @@ export const TrailerDetails = () => {
             ) : (
               <>
                 <Typography variant="h5" color="div">
-                  {'More like this'}
+                  More like this
                 </Typography>
-                <Grid container>
-                  {topInterests.map((interest) => {
-                    const trailerByInterest = getTrailerById(interest)
-                    return (
-                      <Grid item id={`interest-item-${interest}`}>
-                        <Player
-                          url={trailerByInterest?.url!}
-                          title={trailerByInterest?.title!}
-                          id={trailerByInterest?.id!}
-                        />
-                      </Grid>
-                    )
-                  })}
-                </Grid>
+                <TrailersGrid collection={getTrailersFromInterest} />
               </>
             )}
           </>

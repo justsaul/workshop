@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import type { Status, CollectionStatus } from 'src/models/Status'
-import { RootState } from 'src/store/store'
+import type { RootState } from 'src/store/store'
 import { interestAPI, Interest } from 'src/api/interest.api'
 
 export interface InterestState {

@@ -3,6 +3,7 @@ import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
 import trailerSlice from './trailerSlice'
 import trailerDetailsSlice from './trailerDetailsSlice'
 import interestSlice from './inteterestsSlice'
+import themeSlice from './themeSlice'
 import favouriteSlice from './favouritesSlice'
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
     interestSlice,
     favouriteSlice,
     trailerDetailsSlice,
+    themeSlice,
   },
 })
 
