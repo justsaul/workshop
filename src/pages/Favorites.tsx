@@ -10,6 +10,7 @@ import {
 } from '@mui/material'
 import { Delete } from '@mui/icons-material'
 
+import { useAbortController } from 'src/hooks/useAbortController'
 import { useAppDispatch, useAppSelector } from 'src/store/hooks'
 import {
   fetchFavourites,
@@ -20,23 +21,28 @@ import { fetchTrailers, selectTrailerById } from 'src/store/trailerSlice'
 
 const useFavourites = () => {
   const dispatch = useAppDispatch()
+  const abortSignal = useAbortController()
 
   useEffect(() => {
-    dispatch(fetchFavourites())
-  }, [])
+    dispatch(fetchFavourites({ options: { signal: abortSignal } }))
+  }, [abortSignal])
 }
 
 const useFetchTrailers = () => {
   const dispatch = useAppDispatch()
+  const abortSignal = useAbortController()
+
   useEffect(() => {
-    dispatch(fetchTrailers())
-  }, [])
+    dispatch(fetchTrailers({ options: { signal: abortSignal } }))
+  }, [abortSignal])
 }
 
 export const FavouritesPage = () => {
   const dispatch = useAppDispatch()
   useFavourites()
   useFetchTrailers()
+
+  const abortSignal = useAbortController()
 
   const getTrailerById = useAppSelector(selectTrailerById)
   const favourites = useAppSelector(selectFavouriteCollection)
@@ -56,7 +62,12 @@ export const FavouritesPage = () => {
                   <IconButton
                     aria-label="comment"
                     onClick={() => {
-                      dispatch(deleteFavourite(favourite.id))
+                      dispatch(
+                        deleteFavourite({
+                          id: favourite.id,
+                          options: { signal: abortSignal },
+                        })
+                      )
                     }}
                   >
                     <Delete />

@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import type { CollectionStatus } from 'src/models/Status'
-import { RootState } from 'src/store/store'
+import type { PayloadOptions } from 'src/models/PayloadOptions'
+import type { RootState } from 'src/store/store'
 import { trailersAPI, Trailer } from 'src/api/trailers.api'
 
 export interface TrailerState {
@@ -17,8 +18,8 @@ const initialState: TrailerState = {
 
 export const fetchTrailers = createAsyncThunk(
   'trailer/getTrailers',
-  async () => {
-    return await trailersAPI.getAll()
+  async ({ options }: { options?: PayloadOptions }) => {
+    return await trailersAPI.getAll({ signal: options?.signal })
   }
 )
 

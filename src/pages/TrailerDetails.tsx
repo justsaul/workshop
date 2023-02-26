@@ -21,42 +21,49 @@ import {
 import { ContentPlayer } from 'src/components/ContentPlayer'
 import { TrailersGrid } from 'src/components/TrailersGrid'
 import { Trailer } from 'src/api/trailers.api'
+import { useAbortController } from 'src/hooks/useAbortController'
 
 const useFetchTrailerDetails = () => {
   const params = useParams<{ id: string }>()
+  const abortSignal = useAbortController()
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (params.id) {
-      dispatch(fetchTrailerDetails(params.id))
+      dispatch(
+        fetchTrailerDetails({ id: params.id, options: { signal: abortSignal } })
+      )
     }
 
     return () => {
       clearTrailerDetailsState()
     }
-  }, [params.id])
+  }, [params.id, abortSignal])
 }
 
 const useFetchTrailers = () => {
   const dispatch = useAppDispatch()
+  const abortSignal = useAbortController()
+
   useEffect(() => {
-    dispatch(fetchTrailers())
-  }, [])
+    dispatch(fetchTrailers({ options: { signal: abortSignal } }))
+  }, [abortSignal])
 }
 
 const useFetchMoreLikeThis = () => {
   const dispatch = useAppDispatch()
+  const abortSignal = useAbortController()
   const trailerDetails = useAppSelector(selectTrailerDetails)
 
   useEffect(() => {
     if (trailerDetails) {
-      dispatch(fetchInterests())
+      dispatch(fetchInterests({ options: { signal: abortSignal } }))
     }
 
     return () => {
       clearAll()
     }
-  }, [trailerDetails])
+  }, [trailerDetails, abortSignal])
 }
 
 export const TrailerDetails = () => {

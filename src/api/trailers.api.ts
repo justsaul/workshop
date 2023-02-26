@@ -1,3 +1,4 @@
+import { HttpOptions } from 'src/models/HttpOptions'
 import { httpInstance } from './base'
 
 export type Trailer = {
@@ -8,13 +9,17 @@ export type Trailer = {
 }
 
 export const trailersAPI = {
-  getAll: async () => {
-    const response = await httpInstance.get<Array<Trailer>>('/trailers')
+  getAll: async (options?: HttpOptions) => {
+    const response = await httpInstance.get<Array<Trailer>>('trailers', {
+      signal: options?.signal,
+    })
 
     return response.data
   },
-  getByID: async (id: Trailer['id']) => {
-    const response = await httpInstance.get<Trailer>(`trailers/${id}`)
+  getByID: async (id: Trailer['id'], options?: HttpOptions) => {
+    const response = await httpInstance.get<Trailer>(`trailers/${id}`, {
+      signal: options?.signal,
+    })
 
     return response.data
   },

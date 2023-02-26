@@ -1,3 +1,4 @@
+import { HttpOptions } from 'src/models/HttpOptions'
 import { httpInstance } from './base'
 
 export type Interest = {
@@ -6,15 +7,23 @@ export type Interest = {
 }
 
 export const interestAPI = {
-  getAll: async () => {
-    const response = await httpInstance.get<Array<Interest>>('/interest')
+  getAll: async (options?: HttpOptions) => {
+    const response = await httpInstance.get<Array<Interest>>('interest', {
+      signal: options?.signal,
+    })
 
     return response.data
   },
-  setInterest: async (id: Interest['id']) => {
-    const response = await httpInstance.post<Interest>(`interest`, {
-      trailerId: id,
-    })
+  setInterest: async (id: Interest['id'], options?: HttpOptions) => {
+    const response = await httpInstance.post<Interest>(
+      `interest`,
+      {
+        trailerId: id,
+      },
+      {
+        signal: options?.signal,
+      }
+    )
 
     return response.data
   },

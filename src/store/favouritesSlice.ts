@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import type { Status, CollectionStatus } from 'src/models/Status'
+import type { PayloadOptions } from 'src/models/PayloadOptions'
 import { RootState } from 'src/store/store'
 import { Favourite, favouritesAPI } from 'src/api/favourites.api'
 import { Trailer } from 'src/api/trailers.api'
@@ -30,22 +31,22 @@ const initialState: FavouritesState = {
 
 export const setFavourite = createAsyncThunk(
   'favourites/setFavourite',
-  async (id: string) => {
-    return await favouritesAPI.setFavourite(id)
+  async ({ id, options }: { id: string; options?: PayloadOptions }) => {
+    return await favouritesAPI.setFavourite(id, { signal: options?.signal })
   }
 )
 
 export const fetchFavourites = createAsyncThunk(
   'favourites/getAll',
-  async () => {
-    return await favouritesAPI.getAll()
+  async ({ options }: { options?: PayloadOptions }) => {
+    return await favouritesAPI.getAll({ signal: options?.signal })
   }
 )
 
 export const deleteFavourite = createAsyncThunk(
   'favourites/delete',
-  async (id: string) => {
-    return await favouritesAPI.deleteFavourite(id)
+  async ({ id, options }: { id: string; options?: PayloadOptions }) => {
+    return await favouritesAPI.deleteFavourite(id, { signal: options?.signal })
   }
 )
 

@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import type { Status, CollectionStatus } from 'src/models/Status'
 import type { RootState } from 'src/store/store'
+import type { PayloadOptions } from 'src/models/PayloadOptions'
 import { interestAPI, Interest } from 'src/api/interest.api'
 
 export interface InterestState {
@@ -25,15 +26,15 @@ const initialState: InterestState = {
 
 export const fetchInterests = createAsyncThunk(
   'interest/fetchInterests',
-  async () => {
-    return await interestAPI.getAll()
+  async ({ options }: { options?: PayloadOptions }) => {
+    return await interestAPI.getAll({ signal: options?.signal })
   }
 )
 
 export const setInterest = createAsyncThunk(
   'interest/setInterest',
-  async (id: string) => {
-    return await interestAPI.setInterest(id)
+  async ({ id, options }: { id: string; options?: PayloadOptions }) => {
+    return await interestAPI.setInterest(id, { signal: options?.signal })
   }
 )
 

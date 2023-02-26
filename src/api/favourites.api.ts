@@ -1,3 +1,4 @@
+import { HttpOptions } from 'src/models/HttpOptions'
 import { httpInstance } from './base'
 
 export type Favourite = {
@@ -6,20 +7,32 @@ export type Favourite = {
 }
 
 export const favouritesAPI = {
-  getAll: async () => {
-    const response = await httpInstance.get<Array<Favourite>>('favourites')
-
-    return response.data
-  },
-  setFavourite: async (id: Favourite['id']) => {
-    const response = await httpInstance.post<Favourite>(`favourites`, {
-      trailerId: id,
+  getAll: async (options: HttpOptions) => {
+    const response = await httpInstance.get<Array<Favourite>>('favourites', {
+      signal: options.signal,
     })
 
     return response.data
   },
-  deleteFavourite: async (id: Favourite['id']) => {
-    const response = await httpInstance.delete<Favourite>(`favourites/${id}`)
+  setFavourite: async (id: Favourite['id'], options: HttpOptions) => {
+    const response = await httpInstance.post<Favourite>(
+      `favourites`,
+      {
+        trailerId: id,
+      },
+      {
+        signal: options.signal,
+      }
+    )
+
+    return response.data
+  },
+  deleteFavourite: async (id: Favourite['id'], options: HttpOptions) => {
+    console.log('received', options.signal)
+    const response = await httpInstance.delete<Favourite>(`favourites/${id}`, {
+      signal: options.signal,
+    })
+    console.log('received', options.signal)
 
     return response.data
   },

@@ -21,7 +21,10 @@ export const TrailerDetailsCard: React.FC<{
   return (
     <Card sx={{ width: 330 }} elevation={3}>
       <CardMedia>
-        <ContentPlayer url={url} onHover={() => dispatch(setInterest(id))} />
+        <ContentPlayer
+          url={url}
+          onHover={() => dispatch(setInterest({ id }))}
+        />
       </CardMedia>
       <CardContent>
         <Typography noWrap>{title}</Typography>
@@ -29,7 +32,7 @@ export const TrailerDetailsCard: React.FC<{
       <PlayerActions
         isFavourite={!!selectedFavourite}
         onDetailsSelection={() => navigate(`/${id}`)}
-        onFavouritesSelection={() => dispatch(setFavourite(id))}
+        onFavouritesSelection={() => dispatch(setFavourite({ id }))}
       />
     </Card>
   )
