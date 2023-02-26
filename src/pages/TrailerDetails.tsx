@@ -6,17 +6,19 @@ import { Card, CardMedia, CardContent, Typography, Grid } from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from 'src/store/hooks'
 import {
-  fetchTrailerDetails,
-  selectTrailerDetails,
-  clearTrailerDetailsState,
   selectTrailerById,
   fetchTrailers,
   selectTrailerStatus,
 } from 'src/store/trailerSlice'
 import {
+  fetchTrailerDetails,
+  selectTrailerDetails,
+  clearState as clearTrailerDetailsState,
+} from 'src/store/trailerDetailsSlice'
+import {
   fetchInterests,
   clearAll,
-  selectInterests,
+  selectSortedInterests,
 } from 'src/store/inteterestsSlice'
 import { Player } from 'src/components/Player'
 
@@ -64,7 +66,7 @@ export const TrailerDetails = () => {
 
   const details = useAppSelector(selectTrailerDetails)
   const getTrailerById = useAppSelector(selectTrailerById)
-  const interests = useAppSelector(selectInterests)
+  const topInterests = useAppSelector(selectSortedInterests)
   const trailersStatus = useAppSelector(selectTrailerStatus)
 
   return (
@@ -95,10 +97,10 @@ export const TrailerDetails = () => {
                   {'More like this'}
                 </Typography>
                 <Grid container>
-                  {interests.map((interest) => {
-                    const trailerByInterest = getTrailerById(interest.trailerId)
+                  {topInterests.map((interest) => {
+                    const trailerByInterest = getTrailerById(interest)
                     return (
-                      <Grid item id={`interest-item-${interest.id}`}>
+                      <Grid item id={`interest-item-${interest}`}>
                         <Player
                           url={trailerByInterest?.url!}
                           title={trailerByInterest?.title!}

@@ -1,14 +1,16 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
 
 import trailerSlice from './trailerSlice'
+import trailerDetailsSlice from './trailerDetailsSlice'
 import interestSlice from './inteterestsSlice'
 import favouriteSlice from './favouritesSlice'
 
 export const store = configureStore({
   reducer: {
-    trailers: trailerSlice,
-    interest: interestSlice,
-    favourite: favouriteSlice,
+    trailerSlice,
+    interestSlice,
+    favouriteSlice,
+    trailerDetailsSlice,
   },
 })
 
